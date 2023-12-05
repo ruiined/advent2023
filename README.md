@@ -21,7 +21,7 @@ To run your code, simply run `yarn [your-language]`, e.g. `yarn typescript`.
 By default, `yarn start` runs `yarn typescript` - change this if you want.
 
 This will run tests (if provided), execute your code, and send the solution.
-Solutoons will be deduped before sending.
+Solutions will be deduped before sending.
 
 ## Utils (typescript)
 
