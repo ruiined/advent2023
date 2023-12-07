@@ -1,21 +1,19 @@
 import { indexOf, sum } from 'lodash';
 import { parseLines, solve } from '../utils/typescript';
 
+const getDigits = (str: string) => {
+  return str
+    .split('')
+    .map((str) => Number(str))
+    .filter((num) => !!num);
+};
+
 function part1(_input: string[]) {
-  const numbers = [];
-
-  _input.map((line) => {
-    const digits = line
-      .split('')
-      .map((str) => Number(str))
-      .filter((num) => !!num);
-
+  return _input.reduce((acc, line) => {
+    const digits = getDigits(line);
     const number = digits[0] * 10 + digits.at(-1);
-
-    numbers.push(number);
-  });
-
-  return sum(numbers);
+    return acc + number;
+  }, 0);
 }
 
 const stringNumbers = [
@@ -30,64 +28,90 @@ const stringNumbers = [
   'nine',
 ];
 
-const sortCharsByIdx = (arr: string[]) => {
-  const result = [];
-
-  arr.forEach((str) =>
-    str
-      .split('')
-      .forEach((char, i) => (result[i] = [...(result[i] ?? ''), char])),
-  );
-
-  return result;
+const groupCharsByIdx = (arr: string[]): string[] => {
+  return arr.reduce((acc, str) => {
+    str.split('').forEach((char, i) => (acc[i] = [...(acc[i] ?? ''), char]));
+    return acc;
+  }, []);
 };
 
-const findMatch = ({ arr, reverse }: { arr: string[]; reverse?: boolean }) => {
-  const lastIndex = arr.length - 1;
-  const stringNumbersByIdx = reverse
-    ? sortCharsByIdx(stringNumbers).reverse()
-    : sortCharsByIdx(stringNumbers);
+const reverse = (str: string) => str.split('').reverse().join('');
+
+type Props = {
+  arr: string[];
+  numberChars: string[];
+  isReverse?: boolean;
+};
+
+const getDigit = ({ arr, numberChars, isReverse }: Props) => {
   const matches = [];
-  let digit: number;
-  let i: number = reverse ? lastIndex : 0;
+  let n = 0;
+  let value = 0;
+
+  const isMatch = (n: number, char: string) => numberChars[n]?.includes(char);
+
+  const isValidMatch = (matches: string[], char: string) =>
+    stringNumbers.some((s) =>
+      (isReverse ? reverse(s) : s).startsWith([...matches, char].join('')),
+    );
 
   arr.forEach((char) => {
-    if (digit) return;
-
-    const currentMatch = matches.join('');
-
-    if (stringNumbers.includes(currentMatch)) {
-      digit = indexOf(stringNumbers, currentMatch) + 1;
-      return;
-    }
+    if (value) return;
 
     if (!!Number(char)) {
-      digit = Number(char);
+      value = Number(char);
+      n = 0;
       return;
     }
 
-    if (stringNumbersByIdx[i]?.includes(char)) {
-      matches.push(char);
-      reverse ? i-- : i++;
-      return;
-    }
+    matches.forEach(() => {
+      if (!isMatch(n, char) || !isValidMatch(matches, char)) {
+        n--;
+        matches.shift();
+      }
+    });
 
-    reverse ? (i = lastIndex) : (i = 0);
-    matches.pop();
+    if (!isMatch(n, char)) return;
+
+    matches.push(char);
+    n++;
+
+    const currentMatch = isReverse
+      ? [...matches].reverse().join('')
+      : matches.join('');
+
+    if (stringNumbers.includes(currentMatch)) {
+      value = indexOf(stringNumbers, currentMatch) + 1;
+      matches.length = 0;
+      n = 0;
+    }
   });
 
-  return digit ?? 0;
+  return value;
+};
+
+const getMatches = (str: string): number => {
+  const arr = str.split('');
+
+  const firstDigit = getDigit({
+    arr,
+    numberChars: groupCharsByIdx(stringNumbers),
+  });
+
+  const lastDigit = getDigit({
+    arr: arr.reverse(),
+    numberChars: groupCharsByIdx(stringNumbers.map((s) => reverse(s))),
+    isReverse: true,
+  });
+
+  return firstDigit * 10 + lastDigit;
 };
 
 function part2(_input: string[]) {
   const numbers = _input?.map((line) => {
-    const arr = line.split('');
-    const firstDigit = findMatch({ arr });
-    const lastDigit = findMatch({ arr: arr.reverse(), reverse: true });
-
-    return firstDigit * 10 + lastDigit;
+    return getMatches(line);
   });
-  console.log({ _input, numbers });
+
   return sum(numbers);
 }
 
