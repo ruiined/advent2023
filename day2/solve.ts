@@ -16,7 +16,6 @@ function part1(_input: string[]): number {
     const isValid = sets.every((set) =>
       set.split(',').every((cubes) => {
         const [number, colour] = cubes.trim().split(' ');
-
         return possibleCubes[colour] >= number;
       }),
     );
