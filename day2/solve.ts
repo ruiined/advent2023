@@ -10,21 +10,23 @@ const possibleCubes = {
 const getSets = (game: string): string[] => game.split(/[:;]/).slice(1);
 
 function part1(_input: string[]): number {
-  const ids = _input
-    .map((game, id) => {
-      const sets = getSets(game);
+  const ids = _input.reduce((acc, game, id) => {
+    const sets = getSets(game);
 
-      const isValid = sets.every((set) =>
-        set.split(',').every((cubes) => {
-          const [number, colour] = cubes.trim().split(' ');
+    const isValid = sets.every((set) =>
+      set.split(',').every((cubes) => {
+        const [number, colour] = cubes.trim().split(' ');
 
-          return possibleCubes[colour] >= number;
-        }),
-      );
+        return possibleCubes[colour] >= number;
+      }),
+    );
 
-      return isValid ? id + 1 : null;
-    })
-    .filter((i) => !!i);
+    if (isValid) {
+      acc.push(id + 1);
+    }
+
+    return acc;
+  }, []);
 
   return sum(ids);
 }
