@@ -1,5 +1,5 @@
 import { indexOf, sum } from 'lodash';
-import { parseLines, solve } from '../utils/typescript';
+import { parseLines, solve } from '../utils';
 
 const getDigits = (str: string) => {
   return str

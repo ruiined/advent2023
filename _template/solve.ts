@@ -1,11 +1,11 @@
-import { parseLines, solve } from '../utils/typescript';
+import { parseLines, solve } from '../utils';
 
-function part1(_input: string[]) {
-  return 'part1';
+const part1 = (_input: string[]) => {
+  return 0;
 }
 
-function part2(_input: string[]) {
-  return 'part2';
+const part2 = (_input: string[]) => {
+  return 0;
 }
 
-solve({ part1, part2, parser: parseLines() });
+solve({ part1, test1: 999, part2, test2:999, parser: parseLines() });

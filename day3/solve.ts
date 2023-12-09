@@ -1,5 +1,5 @@
 import { sum } from 'lodash';
-import { parseLines, solve } from '../utils/typescript';
+import { parseLines, solve } from '../utils';
 
 const symbolRegex = /[-’/`~!#*$@_%+=,^&(){}[\]|;:”<>?\\]/g;
 
