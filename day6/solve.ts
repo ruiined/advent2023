@@ -13,30 +13,36 @@ const getRaces = (arr: string[]) => {
   return races;
 };
 
+const getNumberOfWays = (time: number, record: number) => {
+  let numberOfWays = 0;
+
+  for (let i = 0; i <= time; i++) {
+    const acceleration = time - i;
+    const distance = acceleration * i;
+
+    if (distance > record) {
+      numberOfWays++;
+    }
+  }
+
+  return numberOfWays;
+};
+
 const part1 = (_input: string[]) => {
   const races = getRaces(_input);
   const result = [];
 
   races.forEach(([time, record]) => {
-    let numberOfWays = 0;
-
-    for (let i = 0; i <= time; i++) {
-      const acceleration = time - i;
-      const distance = acceleration * i;
-
-      if (distance > record) {
-        numberOfWays++;
-      }
-    }
-
-    result.push(numberOfWays);
+    result.push(getNumberOfWays(time, record));
   });
 
   return result.reduce((a, b) => a * b, 1);
 };
 
 const part2 = (_input: string[]) => {
-  return 0;
+  const [time, record] = _input.map((s) => Number(getNumbers(s).join('')));
+
+  return getNumberOfWays(time, record);
 };
 
-solve({ part1, test1: 288, part2, test2: 999, parser: parseLines() });
+solve({ part1, test1: 288, part2, test2: 71503, parser: parseLines() });
